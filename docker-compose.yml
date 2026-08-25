@@ -1,0 +1,30 @@
+# Use postgres/example user/password credentials
+
+services:
+
+  db:
+    image: postgres:latest
+    container_name: digital_certificate
+    restart: always
+    
+    shm_size: 128mb
+    
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: digital_certificate
+
+    ports:
+      -"5432:5432"
+    
+    volumes:
+      - postgres_data:/var/lib/postgresql/data 
+  
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  volumes:
+    postgres_data:

@@ -42,6 +42,7 @@ public class CertificateParser {
                 .signatureAlgorithm(signatureAlgorithm)
                 .publicKeyAlgorithm(publicKeyAlgorithm)
                 .publicKeySize(publicKeySize)
+                .fingerprint(null)
                 .build();
     }
 

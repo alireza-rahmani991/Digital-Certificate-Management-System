@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
-
 @RestController
 @RequestMapping("/api/certificates")
 public class CertificateController {
@@ -29,26 +27,27 @@ public class CertificateController {
     }
 
     @PostMapping
-    public DigitalCertificate postNewCertificate(MultipartFile certificate) {
-        
-        return new DigitalCertificate();
+    public DigitalCertificate postNewCertificate(
+            @RequestParam("certificate") MultipartFile certificate) {
+                
+        return certificateService.saveCertificate(certificate);
     }
 
     @GetMapping
     public String getCertificates() {
         return new String();
     }
-    
+
     @GetMapping("/{id}")
     public DigitalCertificate getCertificate(@PathVariable UUID id) {
         return new DigitalCertificate();
     }
-    
+
     @DeleteMapping("/{id}")
     public void deleteCertificate(@PathVariable UUID id) {
         return;
     }
-    
+
     @PatchMapping("/{id}/revoke")
     public DigitalCertificate revokeCertificate(@PathVariable UUID id) {
         return new DigitalCertificate();
@@ -58,10 +57,10 @@ public class CertificateController {
     public String getExpiringCertificates(@RequestParam UUID id) {
         return new String();
     }
-    
+
     @GetMapping("/statistics")
     public String getMethodName() {
         return new String();
     }
-    
+
 }

@@ -14,7 +14,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@Getter
+@NoArgsConstructor
+@ToString
 @Entity
 @Table(name = "digital_certificates")
 public class DigitalCertificate {
@@ -57,9 +64,12 @@ public class DigitalCertificate {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    public DigitalCertificate() {
+    @PrePersist
+    public void setCreatedAt() {
+        this.createdAt = Instant.now();
     }
 
+    @Builder
     public DigitalCertificate(String serialNumber, String subject, String issuer, String commonName,
             String organization, String country, Instant validFrom, Instant validTo,
             String signatureAlgorithm, String publicKeyAlgorithm, Integer publicKeySize, String fingerprint) {
@@ -75,7 +85,6 @@ public class DigitalCertificate {
         this.publicKeyAlgorithm = publicKeyAlgorithm;
         this.publicKeySize = publicKeySize;
         this.fingerprint = fingerprint;
-        this.createdAt = Instant.now();
 
         Instant now = Instant.now();
         if(validFrom.isAfter(now)){
@@ -89,132 +98,6 @@ public class DigitalCertificate {
         }
 
 
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public String getSerialNumber() {
-        return serialNumber;
-    }
-
-    public void setSerialNumber(String serialNumber) {
-        this.serialNumber = serialNumber;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public String getIssuer() {
-        return issuer;
-    }
-
-    public void setIssuer(String issuer) {
-        this.issuer = issuer;
-    }
-
-    public String getCommonName() {
-        return commonName;
-    }
-
-    public void setCommonName(String commonName) {
-        this.commonName = commonName;
-    }
-
-    public String getOrganization() {
-        return organization;
-    }
-
-    public void setOrganization(String organization) {
-        this.organization = organization;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public Instant getValidFrom() {
-        return validFrom;
-    }
-
-    public void setValidFrom(Instant validFrom) {
-        this.validFrom = validFrom;
-    }
-
-    public Instant getValidTo() {
-        return validTo;
-    }
-
-    public void setValidTo(Instant validTo) {
-        this.validTo = validTo;
-    }
-
-    public CertificateStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(CertificateStatus status) {
-        this.status = status;
-    }
-
-    public String getSignatureAlgorithm() {
-        return signatureAlgorithm;
-    }
-
-    public void setSignatureAlgorithm(String signatureAlgorithm) {
-        this.signatureAlgorithm = signatureAlgorithm;
-    }
-
-    public String getPublicKeyAlgorithm() {
-        return publicKeyAlgorithm;
-    }
-
-    public void setPublicKeyAlgorithm(String publicKeyAlgorithm) {
-        this.publicKeyAlgorithm = publicKeyAlgorithm;
-    }
-
-    public Integer getPublicKeySize() {
-        return publicKeySize;
-    }
-
-    public void setPublicKeySize(Integer publicKeySize) {
-        this.publicKeySize = publicKeySize;
-    }
-
-    public String getFingerprint() {
-        return fingerprint;
-    }
-
-    public void setFingerprint(String fingerprint) {
-        this.fingerprint = fingerprint;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    @PrePersist
-    public void setCreatedAt() {
-        this.createdAt = Instant.now();
-    }
-
-    @Override
-    public String toString() {
-        return "DigitalCertificate [id=" + id + "\n serialNumber=" + serialNumber + "\n subject=" + subject + "\n issuer="
-                + issuer + "\n commonName=" + commonName + "\n organization=" + organization + "\n country=" + country
-                + "\n validFrom=" + validFrom + "\n validTo=" + validTo + "\n status=" + status + "\n signatureAlgorithm="
-                + signatureAlgorithm + "\n publicKeyAlgorithm=" + publicKeyAlgorithm + "\n publicKeySize=" + publicKeySize
-                + "\n fingerprint=" + fingerprint + "\n createdAt=" + createdAt + "]";
     }
 
 }

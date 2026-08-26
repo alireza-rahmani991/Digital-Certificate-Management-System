@@ -9,8 +9,11 @@ import java.time.Instant;
 import javax.naming.ldap.LdapName;
 import javax.naming.ldap.Rdn;
 
+import org.springframework.stereotype.Component;
+
 import com.example.digital_certificate.entity.DigitalCertificate;
 
+@Component
 public class CertificateParser {
 
     public DigitalCertificate parseCertificate(X509Certificate certificate) {
@@ -27,19 +30,19 @@ public class CertificateParser {
         String publicKeyAlgorithm = certificate.getPublicKey().getAlgorithm();
         Integer publicKeySize = getPublicKeySize(certificate);
 
-        return new DigitalCertificate(
-                serialNumber,
-                subject,
-                issuer,
-                commonName,
-                organization,
-                country,
-                validFrom,
-                validTo,
-                signatureAlgorithm,
-                publicKeyAlgorithm,
-                publicKeySize,
-                null);
+        return DigitalCertificate.builder()
+                .serialNumber(serialNumber)
+                .subject(subject)
+                .issuer(issuer)
+                .commonName(commonName)
+                .organization(organization)
+                .country(country)
+                .validFrom(validFrom)
+                .validTo(validTo)
+                .signatureAlgorithm(signatureAlgorithm)
+                .publicKeyAlgorithm(publicKeyAlgorithm)
+                .publicKeySize(publicKeySize)
+                .build();
     }
 
     private String getAttribute(String subject, String type) {

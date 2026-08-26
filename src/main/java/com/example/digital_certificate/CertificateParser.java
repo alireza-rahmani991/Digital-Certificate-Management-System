@@ -1,6 +1,9 @@
 package com.example.digital_certificate;
 
+import java.security.PublicKey;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.ECPublicKey;
+import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
 
 import javax.naming.ldap.LdapName;
@@ -22,25 +25,24 @@ public class CertificateParser {
         Instant validTo = certificate.getNotAfter().toInstant();
         String signatureAlgorithm = certificate.getSigAlgName();
         String publicKeyAlgorithm = certificate.getPublicKey().getAlgorithm();
+        Integer publicKeySize = getPublicKeySize(certificate);
 
-        DigitalCertificate digitalCertificate = new DigitalCertificate(
-            serialNumber,
-            subject,
-            issuer,
-            commonName,
-            organization,
-            country,
-            validFrom,
-            validTo,
-            signatureAlgorithm,
-            publicKeyAlgorithm,
-            null,
-            null
-        );
-        return digitalCertificate;
+        return new DigitalCertificate(
+                serialNumber,
+                subject,
+                issuer,
+                commonName,
+                organization,
+                country,
+                validFrom,
+                validTo,
+                signatureAlgorithm,
+                publicKeyAlgorithm,
+                publicKeySize,
+                null);
     }
 
-    String getAttribute(String subject, String type) {
+    private String getAttribute(String subject, String type) {
         try {
             LdapName ldapName = new LdapName(subject);
             for (Rdn rdn : ldapName.getRdns()) {
@@ -55,4 +57,14 @@ public class CertificateParser {
         }
     }
 
+    private Integer getPublicKeySize(X509Certificate certificate) {
+        PublicKey publicKey = certificate.getPublicKey();
+
+        if (publicKey instanceof RSAPublicKey rsaKey) {
+            return rsaKey.getModulus().bitLength();
+        } else if (publicKey instanceof ECPublicKey ecKey) {
+            return ecKey.getParams().getOrder().bitLength();
+        }
+        return null;
+    }
 }

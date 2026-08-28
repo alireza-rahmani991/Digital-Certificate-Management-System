@@ -72,7 +72,7 @@ public class DigitalCertificate {
     @Builder
     public DigitalCertificate(String serialNumber, String subject, String issuer, String commonName,
             String organization, String country, Instant validFrom, Instant validTo,
-            String signatureAlgorithm, String publicKeyAlgorithm, Integer publicKeySize, String fingerprint) {
+            String signatureAlgorithm, String publicKeyAlgorithm, Integer publicKeySize, String fingerprint, CertificateStatus status) {
         this.serialNumber = serialNumber;
         this.subject = subject;
         this.issuer = issuer;
@@ -85,19 +85,11 @@ public class DigitalCertificate {
         this.publicKeyAlgorithm = publicKeyAlgorithm;
         this.publicKeySize = publicKeySize;
         this.fingerprint = fingerprint;
-
-        Instant now = Instant.now();
-        if(validFrom.isAfter(now)){
-            this.status = CertificateStatus.NOT_YET_VALID;
-        }
-        else if(validTo.isBefore(now)){
-            this.status = CertificateStatus.EXPIRED;
-        }
-        else{
-            this.status = CertificateStatus.VALID;
-        }
-
+        this.status = status;
 
     }
 
+    public void revoke() {
+        this.status = CertificateStatus.REVOKED;
+    }
 }

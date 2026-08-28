@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.UUID;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -27,10 +28,11 @@ public class CertificateController {
     }
 
     @PostMapping
-    public DigitalCertificate postNewCertificate(
+    public ResponseEntity<DigitalCertificate> postNewCertificate(
             @RequestParam("certificate") MultipartFile certificate) {
-                
-        return certificateService.saveCertificate(certificate);
+        DigitalCertificate digitalCertificate = certificateService.saveCertificate(certificate);
+
+        return ResponseEntity.status(201).body(digitalCertificate);
     }
 
     @GetMapping
@@ -49,8 +51,9 @@ public class CertificateController {
     }
 
     @PatchMapping("/{id}/revoke")
-    public DigitalCertificate revokeCertificate(@PathVariable UUID id) {
-        return new DigitalCertificate();
+    public ResponseEntity<DigitalCertificate> revokeCertificate(@PathVariable UUID id) {
+        DigitalCertificate digitalCertificate =certificateService.revokeCertificate(id);
+        return ResponseEntity.ok(digitalCertificate);
     }
 
     @GetMapping("/expiring")

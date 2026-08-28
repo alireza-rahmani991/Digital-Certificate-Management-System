@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.example.digital_certificate.exception.CertificateDoesNotExist;
 import com.example.digital_certificate.exception.DuplicateCertificateException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -16,5 +17,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleDuplicateCertificate(DuplicateCertificateException e) {
         log.error("certificate already exists in database");
         return ResponseEntity.status(409).body(e.getMessage());
+    }
+
+    @ExceptionHandler(CertificateDoesNotExist.class)
+    public ResponseEntity<String> handleCertificateDoesNotExist(CertificateDoesNotExist e) {
+        log.error("certificate does not exist in database");
+        return ResponseEntity.status(404).body(e.getMessage());
     }
 }

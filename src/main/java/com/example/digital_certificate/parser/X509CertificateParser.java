@@ -17,13 +17,21 @@ import javax.naming.ldap.Rdn;
 
 import org.springframework.stereotype.Component;
 
+import com.example.digital_certificate.CertificateStatus;
 import com.example.digital_certificate.entity.DigitalCertificate;
+import com.example.digital_certificate.validation.CertificateValidityChecker;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
 public class X509CertificateParser implements CertificateParser {
+
+    private final CertificateValidityChecker certificateValidityChecker;
+
+    public X509CertificateParser(CertificateValidityChecker certificateValidityChecker) {
+        this.certificateValidityChecker = certificateValidityChecker;
+    }
 
     @Override
     public DigitalCertificate parseCertificate(InputStream inputStream) {
@@ -44,6 +52,7 @@ public class X509CertificateParser implements CertificateParser {
             String publicKeyAlgorithm = certificate.getPublicKey().getAlgorithm();
             Integer publicKeySize = getPublicKeySize(certificate);
             String fingerprint = calculateFingerprint(certificate);
+            CertificateStatus status = certificateValidityChecker.checkValidity(certificate);
 
             return DigitalCertificate.builder()
                     .serialNumber(serialNumber)
@@ -58,6 +67,7 @@ public class X509CertificateParser implements CertificateParser {
                     .publicKeyAlgorithm(publicKeyAlgorithm)
                     .publicKeySize(publicKeySize)
                     .fingerprint(fingerprint)
+                    .status(status)
                     .build();
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,13 +1,16 @@
 package com.example.digital_certificate.service;
 
+import com.example.digital_certificate.DigitalCertificateApplication;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.digital_certificate.parser.CertificateParser;
 import com.example.digital_certificate.entity.DigitalCertificate;
+import com.example.digital_certificate.exception.CertificateDoesNotExist;
 import com.example.digital_certificate.exception.DuplicateCertificateException;
 import com.example.digital_certificate.repository.DigitalCertificateRepository;
 
@@ -21,7 +24,7 @@ public class CertificateService {
     private final CertificateParser certificateParser;
 
     public CertificateService(DigitalCertificateRepository digitalCertificateRepository,
-            CertificateParser certificateParser) {
+            CertificateParser certificateParser, DigitalCertificateApplication digitalCertificateApplication) {
         this.digitalCertificateRepository = digitalCertificateRepository;
         this.certificateParser = certificateParser;
     }
@@ -33,7 +36,8 @@ public class CertificateService {
                     digitalCertificate.getSerialNumber());
 
             if (digitalCertificateRepository.existsByFingerprint(digitalCertificate.getFingerprint())) {
-                throw new DuplicateCertificateException();
+                throw new DuplicateCertificateException(
+                        "certificate with fingerprint " + digitalCertificate.getFingerprint() + " already exists");
             }
 
             digitalCertificate = digitalCertificateRepository.save(digitalCertificate);
@@ -44,6 +48,13 @@ public class CertificateService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public DigitalCertificate revokeCertificate(UUID id) {
+        DigitalCertificate digitalCertificate = digitalCertificateRepository.findById(id)
+                .orElseThrow(() -> new CertificateDoesNotExist("no certificate with id " + id + "exist in database "));
+        digitalCertificate.revoke();
+        return digitalCertificateRepository.save(digitalCertificate);
     }
 
 }

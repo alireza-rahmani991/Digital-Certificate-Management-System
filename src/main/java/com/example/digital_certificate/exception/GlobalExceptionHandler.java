@@ -1,11 +1,8 @@
-package com.example.digital_certificate;
+package com.example.digital_certificate.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import com.example.digital_certificate.exception.CertificateDoesNotExist;
-import com.example.digital_certificate.exception.DuplicateCertificateException;
 
 import lombok.extern.slf4j.Slf4j;
 

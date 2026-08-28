@@ -4,12 +4,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.digital_certificate.DTO.CertificateSearchDTO;
 import com.example.digital_certificate.entity.DigitalCertificate;
 import com.example.digital_certificate.service.CertificateService;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,18 +41,29 @@ public class CertificateController {
     }
 
     @GetMapping
-    public String getCertificates() {
-        return new String();
+    public Page<DigitalCertificate> getCertificates(
+        CertificateSearchDTO searchDTO,
+        @PageableDefault(
+            size = 20,
+            sort = "createdAt",
+            direction = Sort.Direction.DESC
+        )
+        Pageable pageable
+        
+    ) {
+        return certificateService.search(searchDTO, pageable);
     }
 
     @GetMapping("/{id}")
-    public DigitalCertificate getCertificate(@PathVariable UUID id) {
-        return new DigitalCertificate();
+    public ResponseEntity<DigitalCertificate> getCertificate(@PathVariable UUID id) {
+        DigitalCertificate digitalCertificate = certificateService.getCertificateById(id);
+
+        return ResponseEntity.status(200).body(digitalCertificate);
     }
 
     @DeleteMapping("/{id}")
     public void deleteCertificate(@PathVariable UUID id) {
-        return;
+        certificateService.deleteCertificateById(id);
     }
 
     @PatchMapping("/{id}/revoke")
@@ -57,7 +73,7 @@ public class CertificateController {
     }
 
     @GetMapping("/expiring")
-    public String getExpiringCertificates(@RequestParam UUID id) {
+    public String getExpiringCertificates(@RequestParam int days) {
         return new String();
     }
 

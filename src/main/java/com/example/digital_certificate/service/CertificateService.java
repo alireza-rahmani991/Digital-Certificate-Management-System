@@ -2,10 +2,15 @@ package com.example.digital_certificate.service;
 
 import com.example.digital_certificate.CertificateStatus;
 import com.example.digital_certificate.DigitalCertificateApplication;
+import com.example.digital_certificate.DTO.CertificateSearchDTO;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,6 +19,7 @@ import com.example.digital_certificate.entity.DigitalCertificate;
 import com.example.digital_certificate.exception.CertificateDoesNotExist;
 import com.example.digital_certificate.exception.DuplicateCertificateException;
 import com.example.digital_certificate.repository.DigitalCertificateRepository;
+import com.example.digital_certificate.specification.DigitalCertificateSpecification;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,4 +64,22 @@ public class CertificateService {
         return digitalCertificateRepository.save(digitalCertificate);
     }
 
+
+    public DigitalCertificate getCertificateById(UUID id) {
+        return digitalCertificateRepository.findById(id)
+                .orElseThrow(() -> new CertificateDoesNotExist("no certificate with id " + id + "exist in database "));
+    }
+
+    public void deleteCertificateById(UUID id) {
+        if (!digitalCertificateRepository.existsById(id)){
+            throw new CertificateDoesNotExist("no certificate with id " + id + "exist in database ");
+        }
+        digitalCertificateRepository.deleteById(id);
+        log.info("digital certificate deleted successfully : id={}", id);
+    }
+
+    public Page<DigitalCertificate> search(CertificateSearchDTO searchDto, Pageable pageable){
+        Specification<DigitalCertificate> spec = DigitalCertificateSpecification.filter(searchDto);
+        return digitalCertificateRepository.findAll(spec, pageable);
+    }
 }

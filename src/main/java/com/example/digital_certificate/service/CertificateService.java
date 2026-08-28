@@ -1,5 +1,6 @@
 package com.example.digital_certificate.service;
 
+import com.example.digital_certificate.CertificateStatus;
 import com.example.digital_certificate.DigitalCertificateApplication;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,7 +54,7 @@ public class CertificateService {
     public DigitalCertificate revokeCertificate(UUID id) {
         DigitalCertificate digitalCertificate = digitalCertificateRepository.findById(id)
                 .orElseThrow(() -> new CertificateDoesNotExist("no certificate with id " + id + "exist in database "));
-        digitalCertificate.revoke();
+        digitalCertificate.setStatus(CertificateStatus.REVOKED);
         return digitalCertificateRepository.save(digitalCertificate);
     }
 

@@ -89,7 +89,7 @@ public class DigitalCertificate {
 
     }
 
-    public void revoke() {
-        this.status = CertificateStatus.REVOKED;
+    public void setStatus(CertificateStatus status) {
+        this.status = status;
     }
 }

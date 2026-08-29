@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CertificateProcessingException.class)
     public ResponseEntity<String> handleProcessingException(CertificateProcessingException e) {
-        log.error("certificate processing failed", e);
+        log.error("certificate processing failed: {}", e);
         return ResponseEntity.status(500).body("failed to process certificate");
     }
 

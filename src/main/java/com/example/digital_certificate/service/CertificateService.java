@@ -1,7 +1,6 @@
 package com.example.digital_certificate.service;
 
 import com.example.digital_certificate.CertificateStatus;
-import com.example.digital_certificate.DigitalCertificateApplication;
 import com.example.digital_certificate.DTO.CertificateSearchDTO;
 import com.example.digital_certificate.DTO.CertificatesStatisticsDTO;
 
@@ -35,7 +34,7 @@ public class CertificateService {
     private final CertificateParser certificateParser;
 
     public CertificateService(DigitalCertificateRepository digitalCertificateRepository,
-            CertificateParser certificateParser, DigitalCertificateApplication digitalCertificateApplication) {
+            CertificateParser certificateParser) {
         this.digitalCertificateRepository = digitalCertificateRepository;
         this.certificateParser = certificateParser;
     }
@@ -105,6 +104,7 @@ public class CertificateService {
         return new CertificatesStatisticsDTO(
                 digitalCertificateRepository.count(),
                 digitalCertificateRepository.countByStatus(CertificateStatus.VALID),
+                digitalCertificateRepository.countByStatus(CertificateStatus.EXPIRED),
                 digitalCertificateRepository.countByStatus(CertificateStatus.REVOKED),
                 digitalCertificateRepository.countByStatus(CertificateStatus.NOT_YET_VALID),
                 digitalCertificateRepository.countByStatusAndValidToBetween(CertificateStatus.VALID, now,

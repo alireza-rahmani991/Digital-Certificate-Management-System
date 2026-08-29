@@ -3,9 +3,12 @@ package com.example.digital_certificate.service;
 import com.example.digital_certificate.CertificateStatus;
 import com.example.digital_certificate.DigitalCertificateApplication;
 import com.example.digital_certificate.DTO.CertificateSearchDTO;
+import com.example.digital_certificate.DTO.CertificatesStatisticsDTO;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -65,7 +68,7 @@ public class CertificateService {
     }
 
 
-    public DigitalCertificate getCertificateById(UUID id) {
+    public DigitalCertificate findCertificateById(UUID id) {
         return digitalCertificateRepository.findById(id)
                 .orElseThrow(() -> new CertificateDoesNotExist("no certificate with id " + id + "exist in database "));
     }
@@ -81,5 +84,24 @@ public class CertificateService {
     public Page<DigitalCertificate> search(CertificateSearchDTO searchDto, Pageable pageable){
         Specification<DigitalCertificate> spec = DigitalCertificateSpecification.filter(searchDto);
         return digitalCertificateRepository.findAll(spec, pageable);
+    }
+
+    public Page<DigitalCertificate> findbyExpiring(Pageable pageable, int days){
+        Instant now = Instant.now();
+        Instant expiringLimit = now.plus(days, ChronoUnit.DAYS);
+    
+        return digitalCertificateRepository.findByStatusAndValidToBetween(CertificateStatus.VALID, now, expiringLimit, pageable);
+    }
+
+    public CertificatesStatisticsDTO getStatistics(){
+        Instant now = Instant.now();
+        Instant expiringLimit = now.plus(30, ChronoUnit.DAYS);
+        return new CertificatesStatisticsDTO(
+            digitalCertificateRepository.count(),
+            digitalCertificateRepository.countByStatus(CertificateStatus.VALID),
+            digitalCertificateRepository.countByStatus(CertificateStatus.REVOKED),
+            digitalCertificateRepository.countByStatus(CertificateStatus.NOT_YET_VALID),
+            digitalCertificateRepository.countByStatusAndValidToBetween(CertificateStatus.VALID, now, expiringLimit)
+        );
     }
 }

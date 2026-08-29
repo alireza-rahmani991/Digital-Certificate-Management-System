@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.digital_certificate.DTO.CertificateSearchDTO;
+import com.example.digital_certificate.DTO.CertificatesStatisticsDTO;
 import com.example.digital_certificate.entity.DigitalCertificate;
 import com.example.digital_certificate.service.CertificateService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,21 +43,16 @@ public class CertificateController {
 
     @GetMapping
     public Page<DigitalCertificate> getCertificates(
-        CertificateSearchDTO searchDTO,
-        @PageableDefault(
-            size = 20,
-            sort = "createdAt",
-            direction = Sort.Direction.DESC
-        )
-        Pageable pageable
-        
+            CertificateSearchDTO searchDTO,
+            @PageableDefault(size = 20, sort = "validTo", direction = Sort.Direction.ASC) Pageable pageable
+
     ) {
         return certificateService.search(searchDTO, pageable);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<DigitalCertificate> getCertificate(@PathVariable UUID id) {
-        DigitalCertificate digitalCertificate = certificateService.getCertificateById(id);
+        DigitalCertificate digitalCertificate = certificateService.findCertificateById(id);
 
         return ResponseEntity.status(200).body(digitalCertificate);
     }
@@ -68,18 +64,19 @@ public class CertificateController {
 
     @PatchMapping("/{id}/revoke")
     public ResponseEntity<DigitalCertificate> revokeCertificate(@PathVariable UUID id) {
-        DigitalCertificate digitalCertificate =certificateService.revokeCertificate(id);
+        DigitalCertificate digitalCertificate = certificateService.revokeCertificate(id);
         return ResponseEntity.ok(digitalCertificate);
     }
 
     @GetMapping("/expiring")
-    public String getExpiringCertificates(@RequestParam int days) {
-        return new String();
+    public Page<DigitalCertificate> getExpiringCertificates(@RequestParam int days,
+            @PageableDefault(size = 20, sort = "validTo", direction = Sort.Direction.ASC) Pageable pageable) {
+        return certificateService.findbyExpiring(pageable, days);
     }
 
     @GetMapping("/statistics")
-    public String getMethodName() {
-        return new String();
+    public CertificatesStatisticsDTO getStatistics() {
+        return certificateService.getStatistics();
     }
 
 }

@@ -18,7 +18,6 @@ import javax.naming.ldap.Rdn;
 
 import org.springframework.stereotype.Component;
 
-import com.example.digital_certificate.CertificateStatus;
 import com.example.digital_certificate.entity.DigitalCertificate;
 import com.example.digital_certificate.exception.CertificateProcessingException;
 import com.example.digital_certificate.exception.InvalidCertificateException;
@@ -55,9 +54,9 @@ public class X509CertificateParser implements CertificateParser {
             String publicKeyAlgorithm = certificate.getPublicKey().getAlgorithm();
             Integer publicKeySize = getPublicKeySize(certificate);
             String fingerprint = calculateFingerprint(certificate);
-            CertificateStatus status = certificateValidityChecker.checkValidity(certificate);
+            // CertificateStatus status = certificateValidityChecker.checkValidity(certificate);
 
-            return DigitalCertificate.builder()
+            DigitalCertificate digitalCertificate =  DigitalCertificate.builder()
                     .serialNumber(serialNumber)
                     .subject(subject)
                     .issuer(issuer)
@@ -70,8 +69,9 @@ public class X509CertificateParser implements CertificateParser {
                     .publicKeyAlgorithm(publicKeyAlgorithm)
                     .publicKeySize(publicKeySize)
                     .fingerprint(fingerprint)
-                    .status(status)
                     .build();
+            digitalCertificate.setStatus(certificateValidityChecker.checkValidity(digitalCertificate));
+            return digitalCertificate;
         }catch(CertificateException e){
             throw new InvalidCertificateException("uploaded file is not a valid X509 certificate ", e);
         }

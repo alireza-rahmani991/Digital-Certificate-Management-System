@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPublicKey;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Component;
 
 import com.example.digital_certificate.CertificateStatus;
 import com.example.digital_certificate.entity.DigitalCertificate;
+import com.example.digital_certificate.exception.CertificateProcessingException;
+import com.example.digital_certificate.exception.InvalidCertificateException;
 import com.example.digital_certificate.validation.CertificateValidityChecker;
 
 import lombok.extern.slf4j.Slf4j;
@@ -69,10 +72,9 @@ public class X509CertificateParser implements CertificateParser {
                     .fingerprint(fingerprint)
                     .status(status)
                     .build();
-        } catch (Exception e) {
-            e.printStackTrace();
+        }catch(CertificateException e){
+            throw new InvalidCertificateException("uploaded file is not a valid X509 certificate ", e);
         }
-        return null;
 
     }
 
@@ -102,7 +104,7 @@ public class X509CertificateParser implements CertificateParser {
         return null;
     }
 
-    private String calculateFingerprint(X509Certificate certificate) throws CertificateEncodingException {
+    private String calculateFingerprint(X509Certificate certificate){
 
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -113,7 +115,10 @@ public class X509CertificateParser implements CertificateParser {
                     .withUpperCase()
                     .formatHex(hash);
 
-        } catch (NoSuchAlgorithmException e) {
+        }catch (CertificateEncodingException e){
+            throw new CertificateProcessingException("failed to encode the certificate", e);
+        }
+         catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("SHA-256 is not available", e);
         }
     }

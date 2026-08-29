@@ -12,13 +12,38 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DuplicateCertificateException.class)
     public ResponseEntity<String> handleDuplicateCertificate(DuplicateCertificateException e) {
-        log.error("certificate already exists in database");
+        log.warn("duplicate certificate upload rejected: {}", e.getMessage());
         return ResponseEntity.status(409).body(e.getMessage());
     }
 
-    @ExceptionHandler(CertificateDoesNotExist.class)
-    public ResponseEntity<String> handleCertificateDoesNotExist(CertificateDoesNotExist e) {
-        log.error("certificate does not exist in database");
+    @ExceptionHandler(CertificateDoesNotExistException.class)
+    public ResponseEntity<String> handleCertificateDoesNotExist(CertificateDoesNotExistException e) {
+        log.debug("certificate not found: {} ", e.getMessage());
         return ResponseEntity.status(404).body(e.getMessage());
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
+        log.warn("invalid request: {}", e.getMessage());
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<String> handleIllegalStateException(IllegalStateException e) {
+        log.error("illegal application state: {}", e.getMessage(), e);
+        return ResponseEntity.status(500).body("internal server error");
+    }
+
+    @ExceptionHandler(CertificateProcessingException.class)
+    public ResponseEntity<String> handleProcessingException(CertificateProcessingException e) {
+        log.error("certificate processing failed", e);
+        return ResponseEntity.status(500).body("failed to process certificate");
+    }
+
+    @ExceptionHandler(InvalidCertificateException.class)
+    public ResponseEntity<String> handleInvalidCertificateException(InvalidCertificateException e) {
+        log.warn("Invalid X.509 certificate uploaded: {}", e.getMessage());
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
 }

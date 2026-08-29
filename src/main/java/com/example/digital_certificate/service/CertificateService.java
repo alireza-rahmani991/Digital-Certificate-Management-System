@@ -19,7 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.digital_certificate.parser.CertificateParser;
 import com.example.digital_certificate.entity.DigitalCertificate;
-import com.example.digital_certificate.exception.CertificateDoesNotExist;
+import com.example.digital_certificate.exception.CertificateDoesNotExistException;
+import com.example.digital_certificate.exception.CertificateProcessingException;
 import com.example.digital_certificate.exception.DuplicateCertificateException;
 import com.example.digital_certificate.repository.DigitalCertificateRepository;
 import com.example.digital_certificate.specification.DigitalCertificateSpecification;
@@ -55,53 +56,58 @@ public class CertificateService {
                     digitalCertificate.getSerialNumber());
             return digitalCertificate;
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new CertificateProcessingException("failed to read certificate file", e);
         }
-        return null;
     }
 
     public DigitalCertificate revokeCertificate(UUID id) {
         DigitalCertificate digitalCertificate = digitalCertificateRepository.findById(id)
-                .orElseThrow(() -> new CertificateDoesNotExist("no certificate with id " + id + "exist in database "));
+                .orElseThrow(() -> new CertificateDoesNotExistException(
+                        "no certificate with id " + id + "exist in database "));
         digitalCertificate.setStatus(CertificateStatus.REVOKED);
         return digitalCertificateRepository.save(digitalCertificate);
     }
 
-
     public DigitalCertificate findCertificateById(UUID id) {
         return digitalCertificateRepository.findById(id)
-                .orElseThrow(() -> new CertificateDoesNotExist("no certificate with id " + id + "exist in database "));
+                .orElseThrow(() -> new CertificateDoesNotExistException(
+                        "no certificate with id " + id + "exist in database "));
     }
 
     public void deleteCertificateById(UUID id) {
-        if (!digitalCertificateRepository.existsById(id)){
-            throw new CertificateDoesNotExist("no certificate with id " + id + "exist in database ");
+        if (!digitalCertificateRepository.existsById(id)) {
+            throw new CertificateDoesNotExistException("certificate with id " + id + " does not exist in database ");
         }
         digitalCertificateRepository.deleteById(id);
         log.info("digital certificate deleted successfully : id={}", id);
     }
 
-    public Page<DigitalCertificate> search(CertificateSearchDTO searchDto, Pageable pageable){
+    public Page<DigitalCertificate> search(CertificateSearchDTO searchDto, Pageable pageable) {
         Specification<DigitalCertificate> spec = DigitalCertificateSpecification.filter(searchDto);
         return digitalCertificateRepository.findAll(spec, pageable);
     }
 
-    public Page<DigitalCertificate> findbyExpiring(Pageable pageable, int days){
+    public Page<DigitalCertificate> findbyExpiring(Pageable pageable, int days) {
+        if (days <= 0) {
+            throw new IllegalArgumentException(
+                    "Invalid days value: " + days + ". Days must be greater than 0");
+        }
         Instant now = Instant.now();
         Instant expiringLimit = now.plus(days, ChronoUnit.DAYS);
-    
-        return digitalCertificateRepository.findByStatusAndValidToBetween(CertificateStatus.VALID, now, expiringLimit, pageable);
+
+        return digitalCertificateRepository.findByStatusAndValidToBetween(CertificateStatus.VALID, now, expiringLimit,
+                pageable);
     }
 
-    public CertificatesStatisticsDTO getStatistics(){
+    public CertificatesStatisticsDTO getStatistics() {
         Instant now = Instant.now();
         Instant expiringLimit = now.plus(30, ChronoUnit.DAYS);
         return new CertificatesStatisticsDTO(
-            digitalCertificateRepository.count(),
-            digitalCertificateRepository.countByStatus(CertificateStatus.VALID),
-            digitalCertificateRepository.countByStatus(CertificateStatus.REVOKED),
-            digitalCertificateRepository.countByStatus(CertificateStatus.NOT_YET_VALID),
-            digitalCertificateRepository.countByStatusAndValidToBetween(CertificateStatus.VALID, now, expiringLimit)
-        );
+                digitalCertificateRepository.count(),
+                digitalCertificateRepository.countByStatus(CertificateStatus.VALID),
+                digitalCertificateRepository.countByStatus(CertificateStatus.REVOKED),
+                digitalCertificateRepository.countByStatus(CertificateStatus.NOT_YET_VALID),
+                digitalCertificateRepository.countByStatusAndValidToBetween(CertificateStatus.VALID, now,
+                        expiringLimit));
     }
 }

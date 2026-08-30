@@ -1,6 +1,7 @@
 package com.example.digital_certificate.exception;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -46,4 +47,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(400).body(e.getMessage());
     }
 
+    @ExceptionHandler(BindException.class)
+    public ResponseEntity<String> handleBindException(BindException e) {
+        log.warn("invalid search parameters: {}", e.getMessage());
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
 }

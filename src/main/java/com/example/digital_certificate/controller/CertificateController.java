@@ -8,6 +8,9 @@ import com.example.digital_certificate.DTO.CertificateSearchDTO;
 import com.example.digital_certificate.DTO.CertificatesStatisticsDTO;
 import com.example.digital_certificate.entity.DigitalCertificate;
 import com.example.digital_certificate.service.CertificateService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.UUID;
@@ -43,7 +46,7 @@ public class CertificateController {
 
     @GetMapping
     public Page<DigitalCertificate> getCertificates(
-            CertificateSearchDTO searchDTO,
+            @Valid CertificateSearchDTO searchDTO,
             @PageableDefault(size = 20, sort = "validTo", direction = Sort.Direction.ASC) Pageable pageable
 
     ) {

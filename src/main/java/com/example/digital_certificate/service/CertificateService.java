@@ -6,6 +6,7 @@ import com.example.digital_certificate.DTO.CertificatesStatisticsDTO;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
@@ -32,11 +33,13 @@ public class CertificateService {
 
     private final DigitalCertificateRepository digitalCertificateRepository;
     private final CertificateParser certificateParser;
+    private final Clock clock;
 
     public CertificateService(DigitalCertificateRepository digitalCertificateRepository,
-            CertificateParser certificateParser) {
+            CertificateParser certificateParser, Clock clock) {
         this.digitalCertificateRepository = digitalCertificateRepository;
         this.certificateParser = certificateParser;
+        this.clock = clock;
     }
 
     public DigitalCertificate saveCertificate(MultipartFile file) {
@@ -91,7 +94,7 @@ public class CertificateService {
             throw new IllegalArgumentException(
                     "Invalid days value: " + days + ". Days must be greater than 0");
         }
-        Instant now = Instant.now();
+        Instant now = Instant.now(clock);
         Instant expiringLimit = now.plus(days, ChronoUnit.DAYS);
 
         return digitalCertificateRepository.findByStatusAndValidToBetween(CertificateStatus.VALID, now, expiringLimit,
@@ -99,7 +102,7 @@ public class CertificateService {
     }
 
     public CertificatesStatisticsDTO getStatistics() {
-        Instant now = Instant.now();
+        Instant now = Instant.now(clock);
         Instant expiringLimit = now.plus(30, ChronoUnit.DAYS);
         return new CertificatesStatisticsDTO(
                 digitalCertificateRepository.count(),

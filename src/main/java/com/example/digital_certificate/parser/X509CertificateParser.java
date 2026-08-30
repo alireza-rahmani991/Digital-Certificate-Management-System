@@ -111,9 +111,9 @@ public class X509CertificateParser implements CertificateParser {
 
             byte[] hash = digest.digest(certificate.getEncoded());
 
-            return HexFormat.of()
-                    .withUpperCase()
-                    .formatHex(hash);
+            return HexFormat.ofDelimiter(":")
+                .withUpperCase()
+                .formatHex(hash);
 
         }catch (CertificateEncodingException e){
             throw new CertificateProcessingException("failed to encode the certificate", e);

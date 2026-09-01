@@ -1,6 +1,7 @@
 package com.example.digital_certificate;
 
 import java.io.InputStream;
+import java.time.Instant;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,8 +56,8 @@ public class X509CertificateParserTest {
         assertNotNull(result.getSerialNumber());
         assertNotNull(result.getSubject());
         assertNotNull(result.getIssuer());
-        assertNotNull(result.getValidFrom());
-        assertNotNull(result.getValidTo());
+        assertEquals(Instant.parse("2026-08-29T20:05:10Z"), result.getValidFrom());
+        assertEquals(Instant.parse("2036-08-26T20:05:10Z"), result.getValidTo());
         assertNotNull(result.getSignatureAlgorithm());
         assertEquals("4F:0C:6B:0A:14:8E:C4:DA:12:93:6E:5C:22:8C:E9:5F:A8:5D:59:6E:83:2D:19:46:24:DB:38:49:B7:17:62:23",
                 result.getFingerprint());

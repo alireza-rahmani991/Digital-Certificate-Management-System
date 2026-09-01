@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,7 +42,7 @@ public class CertificateController {
             @RequestParam("certificate") MultipartFile certificate) {
         DigitalCertificate digitalCertificate = certificateService.saveCertificate(certificate);
 
-        return ResponseEntity.status(201).body(digitalCertificate);
+        return ResponseEntity.status(HttpStatus.CREATED).body(digitalCertificate);
     }
 
     @GetMapping
@@ -57,12 +58,13 @@ public class CertificateController {
     public ResponseEntity<DigitalCertificate> getCertificate(@PathVariable UUID id) {
         DigitalCertificate digitalCertificate = certificateService.findCertificateById(id);
 
-        return ResponseEntity.status(200).body(digitalCertificate);
+        return ResponseEntity.status(HttpStatus.OK).body(digitalCertificate);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCertificate(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteCertificate(@PathVariable UUID id) {
         certificateService.deleteCertificateById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/revoke")

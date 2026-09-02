@@ -2,7 +2,7 @@ package com.example.digital_certificate.DTO;
 
 import java.time.Instant;
 
-import com.example.digital_certificate.CertificateStatus;
+import com.example.digital_certificate.entity.CertificateStatus;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Size;

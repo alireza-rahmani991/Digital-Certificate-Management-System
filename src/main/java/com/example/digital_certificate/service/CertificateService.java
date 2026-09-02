@@ -1,6 +1,5 @@
 package com.example.digital_certificate.service;
 
-import com.example.digital_certificate.CertificateStatus;
 import com.example.digital_certificate.DTO.CertificateSearchDTO;
 import com.example.digital_certificate.DTO.CertificatesStatisticsDTO;
 
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.digital_certificate.parser.CertificateParser;
+import com.example.digital_certificate.entity.CertificateStatus;
 import com.example.digital_certificate.entity.DigitalCertificate;
 import com.example.digital_certificate.exception.CertificateDoesNotExistException;
 import com.example.digital_certificate.exception.CertificateProcessingException;

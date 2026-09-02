@@ -3,8 +3,6 @@ package com.example.digital_certificate.entity;
 import java.time.Instant;
 import java.util.UUID;
 
-import com.example.digital_certificate.CertificateStatus;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

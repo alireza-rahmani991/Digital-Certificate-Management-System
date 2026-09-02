@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import com.example.digital_certificate.CertificateStatus;
+import com.example.digital_certificate.entity.CertificateStatus;
 import com.example.digital_certificate.entity.DigitalCertificate;
 
 public interface DigitalCertificateRepository

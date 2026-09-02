@@ -32,6 +32,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.digital_certificate.DTO.CertificatesStatisticsDTO;
+import com.example.digital_certificate.entity.CertificateStatus;
 import com.example.digital_certificate.entity.DigitalCertificate;
 import com.example.digital_certificate.exception.CertificateDoesNotExistException;
 import com.example.digital_certificate.exception.CertificateProcessingException;

@@ -1,4 +1,4 @@
-package com.example.digital_certificate;
+package com.example.digital_certificate.entity;
 
 public enum CertificateStatus {
     VALID,

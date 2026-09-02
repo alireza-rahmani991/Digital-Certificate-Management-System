@@ -18,6 +18,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
+import com.example.digital_certificate.entity.CertificateStatus;
 import com.example.digital_certificate.entity.DigitalCertificate;
 import com.example.digital_certificate.exception.InvalidCertificateException;
 import com.example.digital_certificate.parser.CertificateParser;

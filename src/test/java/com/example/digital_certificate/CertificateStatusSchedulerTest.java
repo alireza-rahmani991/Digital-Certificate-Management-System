@@ -15,6 +15,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.example.digital_certificate.configuration.FixedClockTestConfig;
+import com.example.digital_certificate.entity.CertificateStatus;
 import com.example.digital_certificate.entity.DigitalCertificate;
 import com.example.digital_certificate.repository.DigitalCertificateRepository;
 import com.example.digital_certificate.validation.CertificateStatusScheduler;

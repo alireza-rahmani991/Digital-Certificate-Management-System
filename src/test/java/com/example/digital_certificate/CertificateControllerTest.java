@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.digital_certificate.DTO.CertificatesStatisticsDTO;
 import com.example.digital_certificate.controller.CertificateController;
+import com.example.digital_certificate.entity.CertificateStatus;
 import com.example.digital_certificate.entity.DigitalCertificate;
 import com.example.digital_certificate.exception.CertificateDoesNotExistException;
 import com.example.digital_certificate.exception.DuplicateCertificateException;

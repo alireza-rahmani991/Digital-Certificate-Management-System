@@ -5,7 +5,7 @@ import java.time.Instant;
 
 import org.springframework.stereotype.Component;
 
-import com.example.digital_certificate.CertificateStatus;
+import com.example.digital_certificate.entity.CertificateStatus;
 import com.example.digital_certificate.entity.DigitalCertificate;
 
 @Component

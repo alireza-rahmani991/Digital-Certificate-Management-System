@@ -1,0 +1,15 @@
+.git
+.gitignore
+.gitattributes
+.idea
+.vscode
+*.iml
+README.md
+HELP.md
+dockerfile
+docker-compose.yml
+.env
+target
+logs
+testCertificates
+mvnw.cmd

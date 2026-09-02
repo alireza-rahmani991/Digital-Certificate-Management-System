@@ -4,11 +4,11 @@ services:
 
   db:
     image: postgres:18
-    container_name: digital_certificate
+    container_name: digital_certificate_db
     restart: always
-    
+
     shm_size: 128mb
-    
+
     environment:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -16,9 +16,37 @@ services:
 
     ports:
       - "5432:5432"
-    
+
     volumes:
       - postgres_data:/var/lib/postgresql
-  
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d digital_certificate"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: digital_certificate_app
+    restart: always
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+    ports:
+      - "8080:8080"
+
+    volumes:
+      - ./logs:/app/logs
+
 volumes:
   postgres_data:

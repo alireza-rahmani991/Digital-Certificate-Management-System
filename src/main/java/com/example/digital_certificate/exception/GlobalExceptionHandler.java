@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
@@ -66,5 +67,17 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleMultipartException(MultipartException e) {
         log.warn("multipart request could not be processed: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<String> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
+        log.warn("invalid path/query parameter '{}': {}", e.getName(), e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("invalid value for parameter: " + e.getName());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleUnexpected(Exception e) {
+        log.error("unexpected error occurred", e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("internal server error");
     }
 }

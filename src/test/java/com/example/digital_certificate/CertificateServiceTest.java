@@ -76,7 +76,7 @@ public class CertificateServiceTest {
 
         when(repository.existsByFingerprint("test")).thenReturn(false);
 
-        when(repository.save(certificate)).thenReturn(certificate);
+        when(repository.saveAndFlush(certificate)).thenReturn(certificate);
 
         // act
         DigitalCertificate result = service.saveCertificate(file);
@@ -86,7 +86,7 @@ public class CertificateServiceTest {
         verify(file).getInputStream();
         verify(parser).parseCertificate(inputStream);
         verify(repository).existsByFingerprint("test");
-        verify(repository).save(certificate);
+        verify(repository).saveAndFlush(certificate);
 
     }
 
@@ -108,7 +108,7 @@ public class CertificateServiceTest {
         assertThrows(DuplicateCertificateException.class, () -> service.saveCertificate(file));
 
         // assert
-        verify(repository, never()).save(any());
+        verify(repository, never()).saveAndFlush(any());
 
     }
 

@@ -54,9 +54,10 @@ public class X509CertificateParser implements CertificateParser {
             String publicKeyAlgorithm = certificate.getPublicKey().getAlgorithm();
             Integer publicKeySize = getPublicKeySize(certificate);
             String fingerprint = calculateFingerprint(certificate);
-            // CertificateStatus status = certificateValidityChecker.checkValidity(certificate);
+            // CertificateStatus status =
+            // certificateValidityChecker.checkValidity(certificate);
 
-            DigitalCertificate digitalCertificate =  DigitalCertificate.builder()
+            DigitalCertificate digitalCertificate = DigitalCertificate.builder()
                     .serialNumber(serialNumber)
                     .subject(subject)
                     .issuer(issuer)
@@ -72,7 +73,7 @@ public class X509CertificateParser implements CertificateParser {
                     .build();
             digitalCertificate.setStatus(certificateValidityChecker.checkValidity(digitalCertificate));
             return digitalCertificate;
-        }catch(CertificateException e){
+        } catch (CertificateException e) {
             throw new InvalidCertificateException("uploaded file is not a valid X509 certificate ", e);
         }
 
@@ -88,7 +89,7 @@ public class X509CertificateParser implements CertificateParser {
             }
             return null;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("could not parse DN '{}' while extracting attribute '{}': {}", subject, type, e.getMessage());
             return null;
         }
     }
@@ -104,7 +105,7 @@ public class X509CertificateParser implements CertificateParser {
         return null;
     }
 
-    private String calculateFingerprint(X509Certificate certificate){
+    private String calculateFingerprint(X509Certificate certificate) {
 
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -112,13 +113,12 @@ public class X509CertificateParser implements CertificateParser {
             byte[] hash = digest.digest(certificate.getEncoded());
 
             return HexFormat.ofDelimiter(":")
-                .withUpperCase()
-                .formatHex(hash);
+                    .withUpperCase()
+                    .formatHex(hash);
 
-        }catch (CertificateEncodingException e){
+        } catch (CertificateEncodingException e) {
             throw new CertificateProcessingException("failed to encode the certificate", e);
-        }
-         catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("SHA-256 is not available", e);
         }
     }

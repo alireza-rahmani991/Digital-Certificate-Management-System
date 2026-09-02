@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -53,7 +54,12 @@ public class CertificateService {
                         "certificate with fingerprint " + digitalCertificate.getFingerprint() + " already exists");
             }
 
-            digitalCertificate = digitalCertificateRepository.save(digitalCertificate);
+            try {
+                digitalCertificate = digitalCertificateRepository.saveAndFlush(digitalCertificate);
+            } catch (DataIntegrityViolationException e) {
+                throw new DuplicateCertificateException(
+                        "certificate with fingerprint " + digitalCertificate.getFingerprint() + " already exists", e);
+            }
             log.info("digital certificate created and saved successfully : serial-number={}",
                     digitalCertificate.getSerialNumber());
             return digitalCertificate;

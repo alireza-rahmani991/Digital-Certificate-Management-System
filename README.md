@@ -29,7 +29,7 @@ a spring boot REST API for managing X.509 digital certificates.
 - Docker and Docker Compose (recommended, no local Java/Postgres install needed), **or**
 - Java 21 and a local PostgreSQL instance if running without Docker
 
-### 1.Clone the repository
+### 1 .Clone the repository
 
 ```bash
 git clone https://github.com/alireza-rahmani991/Digital-Certificate-Management-System
